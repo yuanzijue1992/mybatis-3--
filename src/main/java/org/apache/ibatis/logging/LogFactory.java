@@ -25,12 +25,16 @@ public final class LogFactory {
 
   /**
    * Marker to be used by logging implementations that support markers
+   * 用于支持标记的日志实现所使用的标记
    */
   public static final String MARKER = "MYBATIS";
 
+  //用来记录当前使用的第三方日志组件所对应的适配器的构造方法
   private static Constructor<? extends Log> logConstructor;
 
   static {
+    // 尝试按顺序加载日志组件
+    // 这边还是第一次见，（类名::静态方法） 作为runnable类型的参数
     tryImplementation(LogFactory::useSlf4jLogging);
     tryImplementation(LogFactory::useCommonsLogging);
     tryImplementation(LogFactory::useLog4J2Logging);
@@ -87,6 +91,7 @@ public final class LogFactory {
     setImplementation(org.apache.ibatis.logging.nologging.NoLoggingImpl.class);
   }
 
+  // 如果log构造函数还为空，则尝试加载此log适配器
   private static void tryImplementation(Runnable runnable) {
     if (logConstructor == null) {
       try {
@@ -97,6 +102,7 @@ public final class LogFactory {
     }
   }
 
+  //  设置log构造函数
   private static void setImplementation(Class<? extends Log> implClass) {
     try {
       Constructor<? extends Log> candidate = implClass.getConstructor(String.class);

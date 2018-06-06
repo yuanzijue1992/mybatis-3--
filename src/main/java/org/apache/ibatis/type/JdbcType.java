@@ -22,6 +22,9 @@ import java.util.Map;
 /**
  * @author Clinton Begin
  */
+/*
+* 这个枚举类型代表了JDBC中的数据类型
+*/
 public enum JdbcType {
   /*
    * This is added to enable basic support for the
@@ -67,7 +70,9 @@ public enum JdbcType {
   SQLXML(Types.SQLXML), // JDK6
   DATETIMEOFFSET(-155); // SQL Server 2008
 
+  // 对应的常量编码
   public final int TYPE_CODE;
+  // 用于维护常量编码与JdbcType之间的对应关系
   private static Map<Integer,JdbcType> codeLookup = new HashMap<>();
 
   static {

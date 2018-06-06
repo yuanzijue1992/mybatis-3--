@@ -35,6 +35,9 @@ import org.apache.ibatis.session.Configuration;
  * @author Simone Tripodi
  * @author Kzuki Shimizu
  */
+
+// 这个类继承了TypeReference并且实现了TypeHandler接口
+// 这个类仍是一个抽象类，TypeHandler接口中的方法实际调用的是对应的抽象函数，而抽象函数由子类来完成。
 public abstract class BaseTypeHandler<T> extends TypeReference<T> implements TypeHandler<T> {
 
   /**
@@ -50,6 +53,7 @@ public abstract class BaseTypeHandler<T> extends TypeReference<T> implements Typ
   public void setConfiguration(Configuration c) {
     this.configuration = c;
   }
+
 
   @Override
   public void setParameter(PreparedStatement ps, int i, T parameter, JdbcType jdbcType) throws SQLException {

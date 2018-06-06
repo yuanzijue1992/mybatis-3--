@@ -29,10 +29,12 @@ public class Log4j2Impl implements Log {
 
   public Log4j2Impl(String clazz) {
     Logger logger = LogManager.getLogger(clazz);
-
+    // 根据这部分可以推测出获得的logger可能存在两种情况，对于两种情况分别使用不同的适配器。
     if (logger instanceof AbstractLogger) {
+      // Log4j2AbstractLoggerImpl适配器
       log = new Log4j2AbstractLoggerImpl((AbstractLogger) logger);
     } else {
+      // Log4j2LoggerImpl适配器
       log = new Log4j2LoggerImpl(logger);
     }
   }

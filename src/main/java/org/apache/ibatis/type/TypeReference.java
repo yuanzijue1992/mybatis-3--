@@ -33,6 +33,10 @@ public abstract class TypeReference<T> {
     rawType = getSuperclassTypeParameter(getClass());
   }
 
+  /*
+  *getClass().getGenericSuperclass() 
+  *返回表示此 Class 所表示的实体（类、接口、基本类型或 void）的直接超类的 Type，然后将其转换ParameterizedType。
+  */
   Type getSuperclassTypeParameter(Class<?> clazz) {
     Type genericSuperclass = clazz.getGenericSuperclass();
     if (genericSuperclass instanceof Class) {
@@ -44,7 +48,11 @@ public abstract class TypeReference<T> {
       throw new TypeException("'" + getClass() + "' extends TypeReference but misses the type parameter. "
         + "Remove the extension or add a type parameter to it.");
     }
-
+    /*
+    * getActualTypeArguments() 
+    * 返回表示此类型实际类型参数的 Type 对象的数组。[0]就是这个数组中第一个了。简而言之就是获得超类的泛型参数的实际类型。
+    */
+    // 获取实际的泛型类型
     Type rawType = ((ParameterizedType) genericSuperclass).getActualTypeArguments()[0];
     // TODO remove this when Reflector is fixed to return Types
     if (rawType instanceof ParameterizedType) {
@@ -54,6 +62,7 @@ public abstract class TypeReference<T> {
     return rawType;
   }
 
+  // 获取泛型的实际类型
   public final Type getRawType() {
     return rawType;
   }

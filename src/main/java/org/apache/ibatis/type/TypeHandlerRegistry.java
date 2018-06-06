@@ -52,11 +52,22 @@ import org.apache.ibatis.reflection.Jdk;
  * @author Clinton Begin
  * @author Kazuki Shimizu
  */
+
+// 此类是用来管理这TypeHandler的所有实现类
 public final class TypeHandlerRegistry {
 
+  // 记录记JdbcType与TypeHandler之间的对应关系，其中JdbcType是一个枚举类型，他定义对应的JDBC类型
+  // 该集合主要用于从结果集读取数据时，将数据从JDBC类型转换为Java类型
   private final Map<JdbcType, TypeHandler<?>> JDBC_TYPE_HANDLER_MAP = new EnumMap<>(JdbcType.class);
+
+  // 记录Java类型向指定JdbcType转换时，需要使用的TypeHandler对象
+  // 转换成数据库的char,varchar类型时存在一对多的情况
   private final Map<Type, Map<JdbcType, TypeHandler<?>>> TYPE_HANDLER_MAP = new ConcurrentHashMap<>();
+
+  // 空TypeHandler集合的标识
   private final TypeHandler<Object> UNKNOWN_TYPE_HANDLER = new UnknownTypeHandler(this);
+
+  // 记录了全部TypeHandler的类型以及给类型相应的TypeHandler对象
   private final Map<Class<?>, TypeHandler<?>> ALL_TYPE_HANDLERS_MAP = new HashMap<>();
 
   private static final Map<JdbcType, TypeHandler<?>> NULL_TYPE_HANDLER_MAP = Collections.emptyMap();
@@ -373,14 +384,17 @@ public final class TypeHandlerRegistry {
     register((Type) type, jdbcType, handler);
   }
 
+  // 大部分register最后都会调用这个函数来完成注册
   private void register(Type javaType, JdbcType jdbcType, TypeHandler<?> handler) {
     if (javaType != null) {
+      // 获取指定Java类型在TYPE_HANDLER_MAP集合中对应的TypeHandler集合
       Map<JdbcType, TypeHandler<?>> map = TYPE_HANDLER_MAP.get(javaType);
-      if (map == null || map == NULL_TYPE_HANDLER_MAP) {
+
+      if (map == null || map == NULL_TYPE_HANDLER_MAP) {//如果不存在，创建一个新的
         map = new HashMap<>();
-        TYPE_HANDLER_MAP.put(javaType, map);
+        TYPE_HANDLER_MAP.put(javaType, map); 
       }
-      map.put(jdbcType, handler);
+      map.put(jdbcType, handler); // 将此TypeHandler对象注册到TYPE_HANDLER_MAP集合中
     }
     ALL_TYPE_HANDLERS_MAP.put(handler.getClass(), handler);
   }

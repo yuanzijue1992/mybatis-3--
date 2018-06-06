@@ -21,17 +21,22 @@ import org.apache.log4j.Logger;
 
 /**
  * @author Eduardo Macarron
+ * log4j的适配器
  */
 public class Log4jImpl implements Log {
   
+  // 这个类的名字
   private static final String FQCN = Log4jImpl.class.getName();
 
+  // 实际使用的log
   private final Logger log;
 
+  // 初始化
   public Log4jImpl(String clazz) {
     log = Logger.getLogger(clazz);
   }
 
+// 下面是通过log4j对接口方法的实现
   @Override
   public boolean isDebugEnabled() {
     return log.isDebugEnabled();

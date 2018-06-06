@@ -18,6 +18,9 @@ package org.apache.ibatis.logging;
 /**
  * @author Clinton Begin
  */
+/*
+* 接口，定义了log需要实现的功能
+*/
 public interface Log {
 
   boolean isDebugEnabled();
