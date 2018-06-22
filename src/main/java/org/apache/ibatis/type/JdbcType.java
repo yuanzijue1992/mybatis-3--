@@ -75,6 +75,7 @@ public enum JdbcType {
   // 用于维护常量编码与JdbcType之间的对应关系
   private static Map<Integer,JdbcType> codeLookup = new HashMap<>();
 
+  // 将所有的 值-枚举类型 存放在codeLookUp中
   static {
     for (JdbcType type : JdbcType.values()) {
       codeLookup.put(type.TYPE_CODE, type);
@@ -85,6 +86,7 @@ public enum JdbcType {
     this.TYPE_CODE = code;
   }
 
+  // 根据值获取对应的JdbcType
   public static JdbcType forCode(int code)  {
     return codeLookup.get(code);
   }

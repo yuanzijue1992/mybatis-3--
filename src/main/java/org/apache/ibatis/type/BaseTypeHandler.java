@@ -52,9 +52,9 @@ public abstract class BaseTypeHandler<T> extends TypeReference<T> implements Typ
   @Deprecated
   public void setConfiguration(Configuration c) {
     this.configuration = c;
-  }
+  } 
 
-
+  // 使用ps设置sql语句的参数，并将数据由JdbcType类型转换为java类型
   @Override
   public void setParameter(PreparedStatement ps, int i, T parameter, JdbcType jdbcType) throws SQLException {
     if (parameter == null) {
