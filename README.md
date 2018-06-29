@@ -12,7 +12,12 @@
 
 
 
+### MyBatis中使用到的设计模式
+1. **log**  ==适配器模式==
 
+2. **DataSource、Transaction** ==工厂方法模式==
+
+   
 
 
 

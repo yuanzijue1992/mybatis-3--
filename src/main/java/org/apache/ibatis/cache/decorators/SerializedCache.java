@@ -1,5 +1,5 @@
-/**
- *    Copyright 2009-2017 the original author or authors.
+/*
+ *    Copyright 2009-2014 the original author or authors.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -32,9 +32,15 @@ import org.apache.ibatis.io.Resources;
 /**
  * @author Clinton Begin
  */
+/**
+ * 序列化缓存
+ * 用途是先将对象序列化成2进制，再缓存,好处是将对象压缩了，省内存
+ * 坏处是速度慢了
+ *
+ */
 public class SerializedCache implements Cache {
 
-  private final Cache delegate;
+  private Cache delegate;
 
   public SerializedCache(Cache delegate) {
     this.delegate = delegate;
@@ -53,6 +59,7 @@ public class SerializedCache implements Cache {
   @Override
   public void putObject(Object key, Object object) {
     if (object == null || object instanceof Serializable) {
+      //先序列化，再委托被包装者putObject
       delegate.putObject(key, serialize((Serializable) object));
     } else {
       throw new CacheException("SharedCache failed to make a copy of a non-serializable object: " + object);
@@ -61,6 +68,7 @@ public class SerializedCache implements Cache {
 
   @Override
   public Object getObject(Object key) {
+    //先委托被包装者getObject,再反序列化
     Object object = delegate.getObject(key);
     return object == null ? null : deserialize((byte[]) object);
   }
@@ -92,6 +100,7 @@ public class SerializedCache implements Cache {
 
   private byte[] serialize(Serializable value) {
     try {
+      //序列化核心就是ByteArrayOutputStream
       ByteArrayOutputStream bos = new ByteArrayOutputStream();
       ObjectOutputStream oos = new ObjectOutputStream(bos);
       oos.writeObject(value);
@@ -106,6 +115,7 @@ public class SerializedCache implements Cache {
   private Serializable deserialize(byte[] value) {
     Serializable result;
     try {
+      //反序列化核心就是ByteArrayInputStream
       ByteArrayInputStream bis = new ByteArrayInputStream(value);
       ObjectInputStream ois = new CustomObjectInputStream(bis);
       result = (Serializable) ois.readObject();
@@ -116,6 +126,7 @@ public class SerializedCache implements Cache {
     return result;
   }
 
+  //这个Custom不明白何意
   public static class CustomObjectInputStream extends ObjectInputStream {
 
     public CustomObjectInputStream(InputStream in) throws IOException {
@@ -126,7 +137,7 @@ public class SerializedCache implements Cache {
     protected Class<?> resolveClass(ObjectStreamClass desc) throws IOException, ClassNotFoundException {
       return Resources.classForName(desc.getName());
     }
-    
+
   }
 
 }

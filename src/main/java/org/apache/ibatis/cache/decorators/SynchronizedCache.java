@@ -1,5 +1,5 @@
-/**
- *    Copyright 2009-2017 the original author or authors.
+/*
+ *    Copyright 2009-2014 the original author or authors.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -22,10 +22,21 @@ import org.apache.ibatis.cache.Cache;
 /**
  * @author Clinton Begin
  */
+/**
+ * 同步缓存
+ * 防止多线程问题
+ * 核心: 加锁
+ *  ReadWriteLock.readLock().lock()/unlock()
+ *  ReadWriteLock.writeLock().lock()/unlock()
+ *
+ *  3.2.6以后这个类已经没用了，考虑到Hazelcast, EhCache已经有锁机制了，所以这个锁就画蛇添足了。
+ * bug见https://github.com/mybatis/mybatis-3/issues/159
+ *
+ */
 public class SynchronizedCache implements Cache {
 
-  private final Cache delegate;
-  
+  private Cache delegate;
+
   public SynchronizedCache(Cache delegate) {
     this.delegate = delegate;
   }

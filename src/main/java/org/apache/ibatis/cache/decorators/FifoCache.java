@@ -1,5 +1,5 @@
-/**
- *    Copyright 2009-2018 the original author or authors.
+/*
+ *    Copyright 2009-2014 the original author or authors.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -26,15 +26,21 @@ import org.apache.ibatis.cache.Cache;
  *
  * @author Clinton Begin
  */
+/*
+ * FIFO缓存
+ * 这个类就是维护一个FIFO链表，其他都委托给所包装的cache去做。典型的装饰模式
+ */
 public class FifoCache implements Cache {
 
+  //
   private final Cache delegate;
-  private final Deque<Object> keyList;
+  // 使用队列来实现FIFO
+  private Deque<Object> keyList;
   private int size;
 
   public FifoCache(Cache delegate) {
     this.delegate = delegate;
-    this.keyList = new LinkedList<>();
+    this.keyList = new LinkedList<Object>();
     this.size = 1024;
   }
 
@@ -79,7 +85,9 @@ public class FifoCache implements Cache {
     return null;
   }
 
+
   private void cycleKeyList(Object key) {
+    //增加记录时判断如果记录已超过1024条，会移除链表的第一个元素，从而达到FIFO缓存效果
     keyList.addLast(key);
     if (keyList.size() > size) {
       Object oldestKey = keyList.removeFirst();

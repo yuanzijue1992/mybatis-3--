@@ -1,5 +1,5 @@
-/**
- *    Copyright 2009-2018 the original author or authors.
+/*
+ *    Copyright 2009-2014 the original author or authors.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -26,7 +26,8 @@ import org.apache.ibatis.cache.Cache;
 /**
  * Weak Reference cache decorator.
  * Thanks to Dr. Heinz Kabutz for his guidance here.
- * 
+ * 弱引用缓存，可以看到代码和SoftCache如出一辙，就是SoftReference变成了WeakReference
+ *
  * @author Clinton Begin
  */
 public class WeakCache implements Cache {
@@ -38,8 +39,8 @@ public class WeakCache implements Cache {
   public WeakCache(Cache delegate) {
     this.delegate = delegate;
     this.numberOfHardLinks = 256;
-    this.hardLinksToAvoidGarbageCollection = new LinkedList<>();
-    this.queueOfGarbageCollectedEntries = new ReferenceQueue<>();
+    this.hardLinksToAvoidGarbageCollection = new LinkedList<Object>();
+    this.queueOfGarbageCollectedEntries = new ReferenceQueue<Object>();
   }
 
   @Override
@@ -67,7 +68,7 @@ public class WeakCache implements Cache {
   public Object getObject(Object key) {
     Object result = null;
     @SuppressWarnings("unchecked") // assumed delegate cache is totally managed by this cache
-    WeakReference<Object> weakReference = (WeakReference<Object>) delegate.getObject(key);
+            WeakReference<Object> weakReference = (WeakReference<Object>) delegate.getObject(key);
     if (weakReference != null) {
       result = weakReference.get();
       if (result == null) {

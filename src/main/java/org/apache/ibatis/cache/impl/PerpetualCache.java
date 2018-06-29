@@ -25,10 +25,14 @@ import org.apache.ibatis.cache.CacheException;
 /**
  * @author Clinton Begin
  */
+
+// 这个是最基础的缓存，其它的装饰器都使用到了这个缓存
 public class PerpetualCache implements Cache {
 
+  //对象的唯一标识
   private final String id;
 
+  // 用于保存缓存
   private Map<Object, Object> cache = new HashMap<>();
 
   public PerpetualCache(String id) {
@@ -45,21 +49,25 @@ public class PerpetualCache implements Cache {
     return cache.size();
   }
 
+  // 存放缓存
   @Override
   public void putObject(Object key, Object value) {
     cache.put(key, value);
   }
 
+  // 获取缓存
   @Override
   public Object getObject(Object key) {
     return cache.get(key);
   }
 
+  // 移除缓存
   @Override
   public Object removeObject(Object key) {
     return cache.remove(key);
   }
 
+  // 清空
   @Override
   public void clear() {
     cache.clear();
